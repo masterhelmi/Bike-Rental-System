@@ -1,20 +1,17 @@
--- Insert bike types with different hourly rates
+-- Update bike types to match new requirements
+-- First, delete existing bikes
+DELETE FROM bikes;
+
+-- Delete existing bike types
+DELETE FROM bike_types;
+
+-- Insert new bike types
 INSERT INTO bike_types (name, hourly_rate, description) VALUES
   ('Sepeda Gowes 1 Orang', 3000, 'Sepeda gowes standar untuk 1 orang'),
   ('Sepeda Gowes 2 Orang', 6000, 'Sepeda gowes tandem untuk 2 orang'),
   ('Sepeda Listrik', 30000, 'Sepeda listrik untuk perjalanan mudah dan cepat');
 
--- Insert operational hours (06:00 - 19:00 every day)
-INSERT INTO operational_hours (day_of_week, open_time, close_time, is_closed) VALUES
-  (0, '06:00', '19:00', FALSE), -- Sunday
-  (1, '06:00', '19:00', FALSE), -- Monday
-  (2, '06:00', '19:00', FALSE), -- Tuesday
-  (3, '06:00', '19:00', FALSE), -- Wednesday
-  (4, '06:00', '19:00', FALSE), -- Thursday
-  (5, '06:00', '19:00', FALSE), -- Friday
-  (6, '06:00', '19:00', FALSE); -- Saturday
-
--- Insert sample bikes (50 bikes total)
+-- Insert new bikes (50 bikes total)
 -- 25 Sepeda Gowes 1 Orang
 INSERT INTO bikes (bike_code, bike_type_id, status, current_location) 
 SELECT 
