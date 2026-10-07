@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { NextResponse } from 'next/server'
 
 export async function GET(request: Request) {
@@ -44,62 +45,81 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const supabase = await createClient()
+    const adminClient = createAdminClient()
     const body = await request.json()
 
-    const { user_id, bike_id, bike_type_id } = body
+    const { bike_type_id, duration } = body
+
+    // Get current user from session
+    const { data: { user } } = await supabase.auth.getUser()
+    
+    if (!user) {
+      return NextResponse.json(
+        { error: 'User not authenticated' },
+        { status: 401 }
+      )
+    }
 
     // Validate required fields
-    if (!user_id) {
+    if (!bike_type_id) {
       return NextResponse.json(
-        { error: 'user_id is required' },
+        { error: 'bike_type_id is required' },
         { status: 400 }
       )
     }
 
-    // Get bike details if bike_id is provided
-    let hourlyRate = 5000 // default rate
-    if (bike_id) {
-      const { data: bike } = await supabase
-        .from('bikes')
-        .select('*, bike_type:bike_types(*)')
-        .eq('id', bike_id)
-        .single()
-
-      if (bike && bike.bike_type) {
-        hourlyRate = bike.bike_type.hourly_rate
-      }
-    } else if (bike_type_id) {
-      const { data: bikeType } = await supabase
-        .from('bike_types')
-        .select('*')
-        .eq('id', bike_type_id)
-        .single()
-
-      if (bikeType) {
-        hourlyRate = bikeType.hourly_rate
-      }
+    if (!duration || duration < 1 || duration > 3) {
+      return NextResponse.json(
+        { error: 'Duration must be between 1-3 hours' },
+        { status: 400 }
+      )
     }
 
-    // Calculate end time (1 hour from now)
-    const startTime = new Date()
-    const endTime = new Date(startTime.getTime() + 60 * 60 * 1000) // 1 hour
-
-    // Create rental
-    const { data, error } = await supabase
-      .from('rentals')
-      .insert({
-        user_id,
-        bike_id,
-        start_time: startTime.toISOString(),
-        end_time: endTime.toISOString(),
-        total_amount: hourlyRate,
-        payment_status: 'pending',
-        status: 'active'
-      })
-      .select()
+    // Get bike type details
+    const { data: bikeType } = await supabase
+      .from('bike_types')
+      .select('*')
+      .eq('id', bike_type_id)
       .single()
 
-    if (error) throw error
+    if (!bikeType) {
+      return NextResponse.json(
+        { error: 'Bike type not found' },
+        { status: 404 }
+      )
+    }
+
+    const hourlyRate = bikeType.hourly_rate
+
+    // Calculate end time based on duration
+    const startTime = new Date()
+    const endTime = new Date(startTime.getTime() + duration * 60 * 60 * 1000)
+
+    // Create rental with pending payment status using admin client to bypass RLS
+    const { data, error } = await adminClient
+      .from('rentals')
+      .insert({
+        user_id: user.id,
+        bike_type_id,
+        start_time: startTime.toISOString(),
+        end_time: endTime.toISOString(),
+        total_amount: hourlyRate * duration,
+        payment_status: 'pending',
+        status: 'pending_payment'
+      })
+      .select(`
+        *,
+        bike_type:bike_types(*)
+      `)
+      .single()
+
+    if (error) {
+      console.error('Database error:', error)
+      return NextResponse.json(
+        { error: error.message || 'Failed to create rental' },
+        { status: 500 }
+      )
+    }
 
     return NextResponse.json({ data }, { status: 201 })
   } catch (error) {

@@ -31,6 +31,8 @@ export function RentalCard({ rental, onExtend, onComplete, onCancel }: RentalCar
     if (isActive) return 'bg-green-100 text-green-800'
     if (isCompleted) return 'bg-blue-100 text-blue-800'
     if (isCancelled) return 'bg-gray-100 text-gray-800'
+    if (rental.status === 'pending_payment') return 'bg-yellow-100 text-yellow-800'
+    if (rental.status === 'rejected') return 'bg-red-100 text-red-800'
     return 'bg-gray-100 text-gray-800'
   }
 
@@ -39,6 +41,8 @@ export function RentalCard({ rental, onExtend, onComplete, onCancel }: RentalCar
     if (isActive) return 'Aktif'
     if (isCompleted) return 'Selesai'
     if (isCancelled) return 'Dibatalkan'
+    if (rental.status === 'pending_payment') return 'Menunggu Pembayaran'
+    if (rental.status === 'rejected') return 'Ditolak'
     return rental.status
   }
 
@@ -120,7 +124,7 @@ export function RentalCard({ rental, onExtend, onComplete, onCancel }: RentalCar
               onClick={onExtend}
               className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
             >
-              Perpanjang (+30m)
+              Perpanjang (+1j)
             </button>
           )}
           {onComplete && (
@@ -139,6 +143,34 @@ export function RentalCard({ rental, onExtend, onComplete, onCancel }: RentalCar
               Batalkan
             </button>
           )}
+        </div>
+      )}
+
+      {rental.status === 'pending_payment' && (
+        <div className="flex gap-2 pt-4 border-t border-gray-200">
+          <div className="flex-1 bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+            <p className="text-sm text-yellow-800 text-center">
+              <strong>Menunggu persetujuan admin</strong>
+            </p>
+          </div>
+          {onCancel && (
+            <button
+              onClick={onCancel}
+              className="flex-1 bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition-colors text-sm font-medium"
+            >
+              Batalkan
+            </button>
+          )}
+        </div>
+      )}
+
+      {rental.status === 'rejected' && (
+        <div className="flex gap-2 pt-4 border-t border-gray-200">
+          <div className="flex-1 bg-red-50 border border-red-200 rounded-lg p-3">
+            <p className="text-sm text-red-800 text-center">
+              <strong>Peminjaman ditolak admin</strong>
+            </p>
+          </div>
         </div>
       )}
     </div>

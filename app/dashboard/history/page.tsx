@@ -215,6 +215,11 @@ export default function HistoryPage() {
                           {' '} (Dibayar: {formatCurrency(rental.paid_amount)})
                         </span>
                       )}
+                      {rental.fine_amount > 0 && (
+                        <span className="text-red-600 font-medium">
+                          {' '} (+ Denda: {formatCurrency(rental.fine_amount)})
+                        </span>
+                      )}
                     </div>
                   </div>
 

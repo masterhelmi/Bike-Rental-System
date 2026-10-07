@@ -8,7 +8,7 @@ export type Json =
 
 export type UserRole = 'user' | 'admin'
 export type BikeStatus = 'available' | 'rented' | 'maintenance' | 'unavailable'
-export type RentalStatus = 'active' | 'completed' | 'overdue' | 'cancelled'
+export type RentalStatus = 'pending_payment' | 'active' | 'completed' | 'overdue' | 'cancelled' | 'rejected'
 export type PaymentStatus = 'pending' | 'paid' | 'refunded' | 'partial'
 export type PaymentMethod = 'transfer' | 'qris' | 'cash' | 'e-wallet'
 export type QueueStatus = 'waiting' | 'notified' | 'assigned' | 'cancelled' | 'expired'
@@ -298,10 +298,12 @@ export interface RentalWithDetails {
   duration_minutes: number | null
   is_extended: boolean
   extension_count: number
-  status: 'active' | 'completed' | 'overdue' | 'cancelled'
+  status: 'pending_payment' | 'active' | 'completed' | 'overdue' | 'cancelled' | 'rejected'
   total_amount: number
   paid_amount: number
   payment_status: 'pending' | 'paid' | 'refunded' | 'partial'
+  fine_amount: number
+  is_fined: boolean
   lock_version: number
   created_at: string
   updated_at: string

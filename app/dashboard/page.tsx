@@ -2,13 +2,14 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Bike, LogOut, History, Plus } from 'lucide-react'
+import { Bike, LogOut, History, Plus, Clock } from 'lucide-react'
 import { RentalCard } from '@/components/dashboard/RentalCard'
 import { QueueStatus } from '@/components/dashboard/QueueStatus'
 import { RentalWithDetails, QueueWithDetails } from '@/lib/types/database'
 
 export default function DashboardPage() {
   const [activeRental, setActiveRental] = useState<RentalWithDetails | null>(null)
+  const [pendingRental, setPendingRental] = useState<RentalWithDetails | null>(null)
   const [queue, setQueue] = useState<QueueWithDetails | null>(null)
   const [loading, setLoading] = useState(true)
 
@@ -21,11 +22,18 @@ export default function DashboardPage() {
       // TODO: Get user ID from auth
       const userId = 'user-id-placeholder' // Replace with actual user ID
 
-      // Fetch active rental
+      // Fetch active rental (not pending_payment)
       const rentalResponse = await fetch(`/api/rentals?user_id=${userId}&status=active`)
       const rentalData = await rentalResponse.json()
       if (rentalData.data && rentalData.data.length > 0) {
         setActiveRental(rentalData.data[0])
+      }
+
+      // Fetch pending rental
+      const pendingResponse = await fetch(`/api/rentals?user_id=${userId}&status=pending_payment`)
+      const pendingData = await pendingResponse.json()
+      if (pendingData.data && pendingData.data.length > 0) {
+        setPendingRental(pendingData.data[0])
       }
 
       // Fetch queue status
@@ -181,6 +189,29 @@ export default function DashboardPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Pending Rental */}
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Menunggu Persetujuan</h3>
+            {pendingRental ? (
+              <RentalCard
+                rental={pendingRental}
+                onCancel={handleCancelRental}
+              />
+            ) : (
+              <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
+                <div className="text-center py-8">
+                  <Clock className="w-12 h-12 mx-auto text-gray-400 mb-3" />
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    Tidak Ada Peminjaman Pending
+                  </h3>
+                  <p className="text-sm text-gray-600">
+                    Anda tidak memiliki peminjaman yang menunggu persetujuan.
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+
           {/* Active Rental */}
           <div>
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Peminjaman Aktif</h3>

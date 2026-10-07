@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 
-const EXTENSION_DURATION = 30 // 30 minutes
+const EXTENSION_DURATION = 60 // 60 minutes (1 hour)
 const MAX_EXTENSIONS = 2
 
 export async function POST(request: Request) {
@@ -73,7 +73,7 @@ export async function POST(request: Request) {
       .single()
 
     const hourlyRate = bike?.bike_type?.hourly_rate || 5000
-    const additionalCost = Math.round((hourlyRate / 60) * EXTENSION_DURATION)
+    const additionalCost = hourlyRate // 1 hour extension = full hourly rate
 
     // Update rental
     const { data, error } = await supabase

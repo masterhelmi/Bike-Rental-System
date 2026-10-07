@@ -56,6 +56,21 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+-- Function to apply fine when rental becomes overdue
+CREATE OR REPLACE FUNCTION apply_overdue_fine()
+RETURNS TRIGGER AS $$
+DECLARE
+  fine_amount INTEGER := 100000; -- Rp 100.000
+BEGIN
+  IF NEW.status = 'overdue' AND OLD.status != 'overdue' AND NEW.is_fined = false THEN
+    NEW.fine_amount := fine_amount;
+    NEW.is_fined := true;
+    NEW.total_amount := NEW.total_amount + fine_amount;
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
 -- Function to extend rental duration
 CREATE OR REPLACE FUNCTION extend_rental_duration(rental_id UUID, extension_minutes INTEGER)
 RETURNS JSON AS $$
@@ -94,7 +109,7 @@ BEGIN
     RETURN json_build_object('success', false, 'error', 'Cannot extend: queue exists for this bike');
   END IF;
 
-  -- Calculate new end time
+  -- Calculate new end time (1 hour = 60 minutes)
   new_end_time := current_rental.end_time + (extension_minutes || ' minutes')::INTERVAL;
 
   -- Update rental
@@ -259,3 +274,9 @@ CREATE TRIGGER assign_queue_position_trigger
   BEFORE INSERT ON queue
   FOR EACH ROW
   EXECUTE FUNCTION assign_queue_position();
+
+CREATE TRIGGER apply_overdue_fine_trigger
+  AFTER UPDATE ON rentals
+  FOR EACH ROW
+  WHEN (NEW.status = 'overdue' AND OLD.status != 'overdue')
+  EXECUTE FUNCTION apply_overdue_fine();

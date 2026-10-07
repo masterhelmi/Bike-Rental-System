@@ -148,10 +148,10 @@ export default function AdminDashboard() {
           >
             <div className="flex items-center gap-3 mb-3">
               <Users className="w-6 h-6 text-blue-600" />
-              <h3 className="text-lg font-semibold text-gray-900">Kelola Peminjaman</h3>
+              <h3 className="text-lg font-semibold text-gray-900">Persetujuan Peminjaman</h3>
             </div>
             <p className="text-sm text-gray-600">
-              Lihat dan kelola semua peminjaman aktif
+              Setujui atau tolak permintaan peminjaman
             </p>
           </Link>
 

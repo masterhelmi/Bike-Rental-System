@@ -56,6 +56,8 @@ CREATE TABLE rentals (
   total_amount INTEGER NOT NULL,
   paid_amount INTEGER DEFAULT 0,
   payment_status payment_status DEFAULT 'pending',
+  fine_amount INTEGER DEFAULT 0,
+  is_fined BOOLEAN DEFAULT FALSE,
   lock_version INTEGER DEFAULT 0,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
