@@ -18,6 +18,31 @@ export default function RegisterPage() {
     setLoading(true)
     setError('')
 
+    // Client-side validation
+    if (!fullName.trim()) {
+      setError('Nama lengkap harus diisi')
+      setLoading(false)
+      return
+    }
+
+    if (!email.trim()) {
+      setError('Email harus diisi')
+      setLoading(false)
+      return
+    }
+
+    if (!phone.trim()) {
+      setError('Nomor telepon harus diisi')
+      setLoading(false)
+      return
+    }
+
+    if (password.length < 6) {
+      setError('Password minimal 6 karakter')
+      setLoading(false)
+      return
+    }
+
     if (password !== confirmPassword) {
       setError('Password tidak cocok')
       setLoading(false)
@@ -25,22 +50,27 @@ export default function RegisterPage() {
     }
 
     try {
-      // TODO: Implement Supabase auth
       const response = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ full_name: fullName, email, phone, password })
       })
 
+      const data = await response.json()
+
       if (!response.ok) {
-        throw new Error('Registration failed')
+        console.error('Registration failed:', data)
+        setError(data.error || 'Registrasi gagal. Silakan coba lagi.')
+        return
       }
 
-      const data = await response.json()
-      // Redirect to dashboard
-      window.location.href = '/dashboard'
+      // Registration successful
+      console.log('Registration successful:', data)
+      alert('Registrasi berhasil! Silakan login untuk melanjutkan.')
+      window.location.href = '/auth/login'
     } catch (err) {
-      setError('Registrasi gagal. Silakan coba lagi.')
+      console.error('Registration error:', err)
+      setError('Terjadi kesalahan koneksi. Silakan coba lagi.')
     } finally {
       setLoading(false)
     }

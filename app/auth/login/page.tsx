@@ -16,22 +16,25 @@ export default function LoginPage() {
     setError('')
 
     try {
-      // TODO: Implement Supabase auth
       const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
       })
 
+      const data = await response.json()
+
       if (!response.ok) {
-        throw new Error('Login failed')
+        setError(data.error || 'Email atau password salah')
+        return
       }
 
-      const data = await response.json()
+      // Login successful
       // Redirect to dashboard
       window.location.href = '/dashboard'
     } catch (err) {
-      setError('Email atau password salah')
+      console.error('Login error:', err)
+      setError('Terjadi kesalahan. Silakan coba lagi.')
     } finally {
       setLoading(false)
     }

@@ -14,13 +14,13 @@ export default function Home() {
             </div>
             <div className="flex gap-4">
               <Link
-                href="/login"
+                href="/auth/login"
                 className="px-4 py-2 text-blue-600 hover:text-blue-700 font-medium"
               >
                 Login
               </Link>
               <Link
-                href="/register"
+                href="/auth/register"
                 className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
               >
                 Daftar
@@ -41,7 +41,7 @@ export default function Home() {
           </p>
           <div className="flex gap-4 justify-center">
             <Link
-              href="/register"
+              href="/auth/register"
               className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium text-lg"
             >
               Mulai Sekarang
