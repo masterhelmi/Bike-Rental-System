@@ -29,9 +29,9 @@ export default function LoginPage() {
         return
       }
 
-      // Login successful
-      // Redirect to dashboard
-      window.location.href = '/dashboard'
+      // Login successful - redirect based on role
+      const redirectUrl = data.role === 'admin' ? '/admin' : '/dashboard'
+      window.location.href = redirectUrl
     } catch (err) {
       console.error('Login error:', err)
       setError('Terjadi kesalahan. Silakan coba lagi.')

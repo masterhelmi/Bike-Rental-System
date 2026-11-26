@@ -4,18 +4,20 @@ import { NextResponse } from 'next/server'
 
 export async function GET(request: Request) {
   try {
-    const supabase = await createClient()
+    // Use admin client to bypass RLS for admin operations
+    const adminClient = createAdminClient()
     const { searchParams } = new URL(request.url)
     const userId = searchParams.get('user_id')
     const status = searchParams.get('status')
     const limit = parseInt(searchParams.get('limit') || '10')
 
-    let query = supabase
+    let query = adminClient
       .from('rentals')
       .select(`
         *,
         bike:bikes(*, bike_type:bike_types(*)),
-        user:profiles(*)
+        user:profiles(*),
+        bike_type:bike_types(*)
       `)
       .order('created_at', { ascending: false })
       .limit(limit)
@@ -94,6 +96,7 @@ export async function POST(request: Request) {
     // Calculate end time based on duration
     const startTime = new Date()
     const endTime = new Date(startTime.getTime() + duration * 60 * 60 * 1000)
+    const durationMinutes = duration * 60
 
     // Create rental with pending payment status using admin client to bypass RLS
     const { data, error } = await adminClient
@@ -103,14 +106,12 @@ export async function POST(request: Request) {
         bike_type_id,
         start_time: startTime.toISOString(),
         end_time: endTime.toISOString(),
+        duration_minutes: durationMinutes,
         total_amount: hourlyRate * duration,
         payment_status: 'pending',
         status: 'pending_payment'
       })
-      .select(`
-        *,
-        bike_type:bike_types(*)
-      `)
+      .select()
       .single()
 
     if (error) {
@@ -121,7 +122,27 @@ export async function POST(request: Request) {
       )
     }
 
-    return NextResponse.json({ data }, { status: 201 })
+    // Fetch bike type details separately
+    let bikeTypeDetails = null
+    if (data.bike_type_id) {
+      const { data: bikeType } = await supabase
+        .from('bike_types')
+        .select('*')
+        .eq('id', data.bike_type_id)
+        .single()
+      
+      if (bikeType) {
+        bikeTypeDetails = bikeType
+      }
+    }
+
+    // Combine data
+    const responseData = {
+      ...data,
+      bike_type: bikeTypeDetails
+    }
+
+    return NextResponse.json({ data: responseData }, { status: 201 })
   } catch (error) {
     console.error('Error creating rental:', error)
     return NextResponse.json(

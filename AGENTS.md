@@ -82,6 +82,89 @@ Required in `.env.local`:
 - Open: 06:00 - 19:00 daily
 - Block bookings outside hours
 
+### Late Return Penalty Policy
+
+Sistem menggunakan pendekatan grace period + denda bertingkat untuk keterlambatan pengembalian sepeda:
+
+#### Aturan Denda
+1. **Grace Period (0-5 menit)** - Tidak ada denda (toleransi keterlambatan kecil)
+2. **Keterlambatan Ringan (5-10 menit)** - Denda: Rp 10.000
+3. **Keterlambatan Sedang (10-30 menit)** - Denda: Rp 20.000
+4. **Keterlambatan Berat (30-60 menit)** - Denda: Rp 50.000
+5. **Keterlambatan Parah (> 60 menit)** - Denda: Rp 100.000 (maksimal)
+
+#### Implementasi Teknis
+
+**Fungsi SQL untuk menghitung denda:**
+```sql
+CREATE OR REPLACE FUNCTION calculate_late_penalty(
+    end_time TIMESTAMP,
+    actual_return_time TIMESTAMP
+) RETURNS BIGINT AS $$
+DECLARE
+    overdue_minutes BIGINT;
+    penalty BIGINT;
+BEGIN
+    overdue_minutes := EXTRACT(EPOCH FROM (actual_return_time - end_time)) / 60;
+
+    IF overdue_minutes <= 5 THEN
+        RETURN 0;
+    ELSIF overdue_minutes <= 10 THEN
+        RETURN 10000;
+    ELSIF overdue_minutes <= 30 THEN
+        RETURN 20000;
+    ELSIF overdue_minutes <= 60 THEN
+        RETURN 50000;
+    ELSE
+        RETURN 100000;
+    END IF;
+END;
+$$ LANGUAGE plpgsql;
+```
+
+**Status Rental untuk Keterlambatan:**
+- `active` - Rental sedang berjalan (belum lewat waktu)
+- `overdue` - Rental melewati waktu pengembalian
+- `completed` - Rental selesai tanpa denda
+- `completed_with_penalty` - Rental selesai dengan denda
+
+**Tabel Penalties (Opsional):**
+```sql
+CREATE TABLE penalties (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    rental_id UUID REFERENCES rentals(id),
+    user_id UUID REFERENCES profiles(id),
+    amount BIGINT NOT NULL,
+    overdue_minutes BIGINT NOT NULL,
+    penalty_tier VARCHAR(20) NOT NULL, -- 'light', 'medium', 'heavy', 'severe'
+    status VARCHAR(20) DEFAULT 'pending', -- 'pending', 'paid', 'waived'
+    created_at TIMESTAMP DEFAULT NOW(),
+    paid_at TIMESTAMP,
+    waived_by UUID REFERENCES profiles(id),
+    waived_reason TEXT
+);
+```
+
+**Perubahan di Tabel Rentals:**
+- `actual_return_time` - Waktu sebenarnya saat sepeda dikembalikan
+- `penalty_amount` - Jumlah denda (default 0)
+- `overdue_minutes` - Total menit keterlambatan
+
+#### User Experience
+- 10 menit sebelum habis: Notifikasi "Waktu hampir habis"
+- Saat terlambat: Notifikasi "Anda terlambat mengembalikan sepeda"
+- Dashboard user: Banner merah jika overdue, ringkasan denda di riwayat
+- Dashboard admin: Statistik denda, daftar user sering terlambat, kemampuan waiving denda
+
+#### Kebijakan Waiving (Pemaafan Denda)
+Admin dapat memaafkan denda dalam kasus:
+- Darurat medis (bukti medis)
+- Masalah teknis sepeda (sepeda rusak, ban bocor)
+- Cuaca ekstrem (hujan deras, bencana)
+- Kesalahan sistem
+
+Catatan waiving harus mencatat admin yang menyetujui, alasan, dan bukti pendukung.
+
 ## API Routes Structure
 
 ### Rentals

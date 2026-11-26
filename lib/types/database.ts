@@ -292,6 +292,7 @@ export interface RentalWithDetails {
   id: string
   user_id: string
   bike_id: string | null
+  bike_type_id: string | null
   start_time: string
   end_time: string
   actual_end_time: string | null
@@ -302,12 +303,20 @@ export interface RentalWithDetails {
   total_amount: number
   paid_amount: number
   payment_status: 'pending' | 'paid' | 'refunded' | 'partial'
-  fine_amount: number
-  is_fined: boolean
+  fine_amount?: number
+  is_fined?: boolean
   lock_version: number
   created_at: string
   updated_at: string
   bike?: BikeWithType
+  bike_type?: {
+    id: string
+    name: string
+    hourly_rate: number
+    description: string | null
+    created_at: string
+    updated_at: string
+  }
   user?: {
     id: string
     full_name: string | null

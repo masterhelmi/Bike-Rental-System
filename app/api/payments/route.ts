@@ -1,20 +1,22 @@
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { NextResponse } from 'next/server'
 
 export async function GET(request: Request) {
   try {
-    const supabase = await createClient()
+    // Use admin client to bypass RLS for admin operations
+    const adminClient = createAdminClient()
     const { searchParams } = new URL(request.url)
     const userId = searchParams.get('user_id')
     const rentalId = searchParams.get('rental_id')
     const status = searchParams.get('status')
 
-    let query = supabase
+    let query = adminClient
       .from('payments')
       .select(`
         *,
-        rental:rentals(*),
-        user:profiles(*)
+        rental:rentals!rental_id_fkey(*),
+        user:profiles!user_id_fkey(*)
       `)
       .order('created_at', { ascending: false })
 
@@ -46,7 +48,7 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    const supabase = await createClient()
+    const adminClient = createAdminClient()
     const body = await request.json()
 
     const { rental_id, user_id, amount, payment_method, transaction_id } = body
@@ -58,8 +60,8 @@ export async function POST(request: Request) {
       )
     }
 
-    // Create payment record
-    const { data: payment, error: paymentError } = await supabase
+    // Create payment record using admin client
+    const { data: payment, error: paymentError } = await adminClient
       .from('payments')
       .insert({
         rental_id: rental_id || null,
@@ -77,7 +79,7 @@ export async function POST(request: Request) {
 
     // If this payment is for a rental, update rental paid_amount
     if (rental_id) {
-      const { data: rental } = await supabase
+      const { data: rental } = await adminClient
         .from('rentals')
         .select('*')
         .eq('id', rental_id)
@@ -87,7 +89,7 @@ export async function POST(request: Request) {
         const newPaidAmount = rental.paid_amount + amount
         const newPaymentStatus = newPaidAmount >= rental.total_amount ? 'paid' : 'partial'
 
-        await supabase
+        await adminClient
           .from('rentals')
           .update({
             paid_amount: newPaidAmount,

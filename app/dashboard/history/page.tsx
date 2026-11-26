@@ -2,18 +2,21 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { ArrowLeft, Calendar, Clock, Bike, DollarSign, CheckCircle, XCircle, AlertCircle } from 'lucide-react'
+import { ArrowLeft, Calendar, Clock, Bike, DollarSign, CheckCircle, XCircle, AlertCircle, AlertTriangle } from 'lucide-react'
+import { createClient } from '@/lib/supabase/client'
 
 interface RentalWithDetails {
   id: string
   start_time: string
   end_time: string
-  actual_end_time: string | null
+  actual_return_time: string | null
   duration_minutes: number | null
   status: string
   total_amount: number
   paid_amount: number
   payment_status: string
+  penalty_amount?: number
+  overdue_minutes?: number
   bike?: {
     bike_code: string
     bike_type?: {
@@ -33,10 +36,15 @@ export default function HistoryPage() {
 
   const fetchRentals = async () => {
     try {
-      // TODO: Get actual user ID from auth
-      const userId = 'user-id-placeholder'
-      
-      const response = await fetch(`/api/rentals?user_id=${userId}`)
+      const supabase = await createClient()
+      const { data: { user } } = await supabase.auth.getUser()
+
+      if (!user) {
+        setLoading(false)
+        return
+      }
+
+      const response = await fetch(`/api/rentals?user_id=${user.id}`)
       const data = await response.json()
       setRentals(data.data || [])
     } catch (error) {
@@ -70,10 +78,16 @@ export default function HistoryPage() {
         return 'bg-green-100 text-green-800'
       case 'completed':
         return 'bg-blue-100 text-blue-800'
+      case 'completed_with_penalty':
+        return 'bg-orange-100 text-orange-800'
       case 'overdue':
         return 'bg-red-100 text-red-800'
       case 'cancelled':
         return 'bg-gray-100 text-gray-800'
+      case 'pending_payment':
+        return 'bg-yellow-100 text-yellow-800'
+      case 'rejected':
+        return 'bg-red-100 text-red-800'
       default:
         return 'bg-gray-100 text-gray-800'
     }
@@ -85,6 +99,8 @@ export default function HistoryPage() {
         return <Clock className="w-4 h-4" />
       case 'completed':
         return <CheckCircle className="w-4 h-4" />
+      case 'completed_with_penalty':
+        return <AlertTriangle className="w-4 h-4" />
       case 'overdue':
         return <AlertCircle className="w-4 h-4" />
       case 'cancelled':
@@ -100,10 +116,16 @@ export default function HistoryPage() {
         return 'Aktif'
       case 'completed':
         return 'Selesai'
+      case 'completed_with_penalty':
+        return 'Selesai dengan Denda'
       case 'overdue':
         return 'Terlambat'
       case 'cancelled':
         return 'Dibatalkan'
+      case 'pending_payment':
+        return 'Menunggu Pembayaran'
+      case 'rejected':
+        return 'Ditolak'
       default:
         return status
     }
@@ -182,8 +204,8 @@ export default function HistoryPage() {
                     <div>
                       <div className="font-medium">Selesai</div>
                       <div>
-                        {rental.actual_end_time
-                          ? formatDate(rental.actual_end_time)
+                        {rental.actual_return_time
+                          ? formatDate(rental.actual_return_time)
                           : formatDate(rental.end_time)}
                       </div>
                     </div>
@@ -215,9 +237,10 @@ export default function HistoryPage() {
                           {' '} (Dibayar: {formatCurrency(rental.paid_amount)})
                         </span>
                       )}
-                      {rental.fine_amount > 0 && (
+                      {rental.penalty_amount && rental.penalty_amount > 0 && (
                         <span className="text-red-600 font-medium">
-                          {' '} (+ Denda: {formatCurrency(rental.fine_amount)})
+                          {' '} (+ Denda: {formatCurrency(rental.penalty_amount)})
+                          {rental.overdue_minutes && ` (${rental.overdue_minutes} menit)`}
                         </span>
                       )}
                     </div>

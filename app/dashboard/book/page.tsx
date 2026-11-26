@@ -2,7 +2,9 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { Bike, Clock, DollarSign, ArrowLeft, User, Zap, Check } from 'lucide-react'
+import { createClient } from '@/lib/supabase/client'
 
 interface BikeType {
   id: string
@@ -12,6 +14,7 @@ interface BikeType {
 }
 
 export default function BookBikePage() {
+  const router = useRouter()
   const [bikeTypes, setBikeTypes] = useState<BikeType[]>([])
   const [selectedBikeType, setSelectedBikeType] = useState<string | null>(null)
   const [duration, setDuration] = useState(1)
@@ -21,7 +24,29 @@ export default function BookBikePage() {
 
   useEffect(() => {
     fetchBikeTypes()
+    checkPendingRental()
   }, [])
+
+  const checkPendingRental = async () => {
+    try {
+      const supabase = await createClient()
+      const { data: { user } } = await supabase.auth.getUser()
+
+      if (!user) {
+        router.push('/auth/login')
+        return
+      }
+
+      const response = await fetch(`/api/rentals?user_id=${user.id}&status=pending_payment`)
+      const data = await response.json()
+      if (data.data && data.data.length > 0) {
+        // User has pending rental, redirect to dashboard
+        router.push('/dashboard')
+      }
+    } catch (error) {
+      console.error('Error checking pending rental:', error)
+    }
+  }
 
   const fetchBikeTypes = async () => {
     try {
@@ -51,15 +76,12 @@ export default function BookBikePage() {
     setError('')
 
     try {
-      // TODO: Get actual user ID from auth
-      const userId = 'user-id-placeholder'
-      
       const response = await fetch('/api/rentals', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          user_id: userId,
-          bike_type_id: selectedBikeType
+          bike_type_id: selectedBikeType,
+          duration: duration
         })
       })
 

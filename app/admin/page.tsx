@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Bike, LogOut, Settings, BarChart3, Users, DollarSign } from 'lucide-react'
+import { Bike, LogOut, Settings, BarChart3, Users, DollarSign, AlertTriangle } from 'lucide-react'
 import { StatsCards } from '@/components/admin/StatsCards'
 import { BikeTable } from '@/components/admin/BikeTable'
 import { BikeWithType } from '@/lib/types/database'
@@ -13,7 +13,8 @@ export default function AdminDashboard() {
     availableBikes: 0,
     activeRentals: 0,
     queueLength: 0,
-    todayRevenue: 0
+    todayRevenue: 0,
+    todayPenalties: 0
   })
   const [bikes, setBikes] = useState<BikeWithType[]>([])
   const [loading, setLoading] = useState(true)
@@ -29,17 +30,50 @@ export default function AdminDashboard() {
       const bikesData = await bikesResponse.json()
       setBikes(bikesData.data || [])
 
+      // Fetch rentals
+      const rentalsResponse = await fetch('/api/rentals')
+      const rentalsData = await rentalsResponse.json()
+      const rentals = rentalsData.data || []
+
+      // Fetch queue
+      const queueResponse = await fetch('/api/queue')
+      const queueData = await queueResponse.json()
+      const queue = queueData.data || []
+
+      // Fetch payments
+      const paymentsResponse = await fetch('/api/payments')
+      const paymentsData = await paymentsResponse.json()
+      const payments = paymentsData.data || []
+
+      // Fetch penalties
+      const penaltiesResponse = await fetch('/api/penalties')
+      const penaltiesData = await penaltiesResponse.json()
+      const penalties = penaltiesData.data || []
+
       // Calculate stats
       const totalBikes = bikesData.data?.length || 0
       const availableBikes = bikesData.data?.filter((b: BikeWithType) => b.status === 'available').length || 0
+      const activeRentals = rentals.filter((r: any) => r.status === 'active').length
+      const queueLength = queue.filter((q: any) => q.status === 'waiting').length
 
-      // TODO: Fetch other stats from appropriate endpoints
+      // Calculate today's revenue
+      const today = new Date().toISOString().split('T')[0]
+      const todayRevenue = payments
+        .filter((p: any) => p.payment_status === 'completed' && p.created_at.startsWith(today))
+        .reduce((sum: number, p: any) => sum + p.amount, 0)
+
+      // Calculate today's penalties
+      const todayPenalties = penalties
+        .filter((p: any) => p.created_at.startsWith(today))
+        .reduce((sum: number, p: any) => sum + p.amount, 0)
+
       setStats({
         totalBikes,
         availableBikes,
-        activeRentals: 0, // TODO: Fetch from rentals API
-        queueLength: 0, // TODO: Fetch from queue API
-        todayRevenue: 0 // TODO: Fetch from payments API
+        activeRentals,
+        queueLength,
+        todayRevenue,
+        todayPenalties
       })
     } catch (error) {
       console.error('Error fetching admin data:', error)
@@ -77,6 +111,35 @@ export default function AdminDashboard() {
   const handleAddBike = () => {
     // TODO: Implement add modal
     console.log('Add bike')
+  }
+
+  const handleResetBikeStatus = async (bikeId: string) => {
+    if (!confirm('Apakah Anda yakin ingin mereset status sepeda ini ke tersedia?')) return
+
+    try {
+      const response = await fetch(`/api/bikes/${bikeId}/reset`, {
+        method: 'POST'
+      })
+
+      if (response.ok) {
+        fetchAdminData() // Refresh data
+        alert('Status sepeda berhasil direset ke tersedia')
+      } else {
+        const error = await response.json()
+        alert(error.error || 'Gagal mereset status sepeda')
+      }
+    } catch (error) {
+      console.error('Error resetting bike status:', error)
+      alert('Terjadi kesalahan saat mereset status sepeda')
+    }
+  }
+
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      minimumFractionDigits: 0
+    }).format(amount)
   }
 
   if (loading) {
@@ -138,10 +201,11 @@ export default function AdminDashboard() {
           activeRentals={stats.activeRentals}
           queueLength={stats.queueLength}
           todayRevenue={stats.todayRevenue}
+          todayPenalties={stats.todayPenalties}
         />
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-8">
           <Link
             href="/admin/rentals"
             className="bg-white rounded-lg shadow-md p-6 border border-gray-200 hover:shadow-lg transition-shadow"
@@ -180,6 +244,19 @@ export default function AdminDashboard() {
               Lihat riwayat transaksi dan pendapatan
             </p>
           </Link>
+
+          <Link
+            href="/admin/penalties"
+            className="bg-white rounded-lg shadow-md p-6 border border-gray-200 hover:shadow-lg transition-shadow"
+          >
+            <div className="flex items-center gap-3 mb-3">
+              <AlertTriangle className="w-6 h-6 text-red-600" />
+              <h3 className="text-lg font-semibold text-gray-900">Manajemen Denda</h3>
+            </div>
+            <p className="text-sm text-gray-600">
+              Kelola denda keterlambatan dan waiving
+            </p>
+          </Link>
         </div>
 
         {/* Bike Management */}
@@ -189,6 +266,7 @@ export default function AdminDashboard() {
             onEdit={handleEditBike}
             onDelete={handleDeleteBike}
             onAdd={handleAddBike}
+            onResetStatus={handleResetBikeStatus}
           />
         </div>
       </main>

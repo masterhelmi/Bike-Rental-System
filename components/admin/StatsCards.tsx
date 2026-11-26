@@ -1,6 +1,6 @@
 'use client'
 
-import { Bike, Users, DollarSign, Clock } from 'lucide-react'
+import { Bike, Users, DollarSign, Clock, AlertTriangle } from 'lucide-react'
 
 interface StatsCardsProps {
   totalBikes: number
@@ -8,6 +8,7 @@ interface StatsCardsProps {
   activeRentals: number
   queueLength: number
   todayRevenue: number
+  todayPenalties: number
 }
 
 export function StatsCards({
@@ -15,7 +16,8 @@ export function StatsCards({
   availableBikes,
   activeRentals,
   queueLength,
-  todayRevenue
+  todayRevenue,
+  todayPenalties
 }: StatsCardsProps) {
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('id-ID', {
@@ -53,11 +55,18 @@ export function StatsCards({
       subtitle: 'Total transaksi',
       icon: DollarSign,
       color: 'bg-purple-500'
+    },
+    {
+      title: 'Denda Hari Ini',
+      value: formatCurrency(todayPenalties),
+      subtitle: 'Total denda keterlambatan',
+      icon: AlertTriangle,
+      color: 'bg-red-500'
     }
   ]
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
       {stats.map((stat) => (
         <div key={stat.title} className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
           <div className="flex items-center justify-between mb-4">

@@ -1,16 +1,17 @@
 'use client'
 
 import { BikeWithType } from '@/lib/types/database'
-import { Edit, Trash2, Plus } from 'lucide-react'
+import { Edit, Trash2, Plus, RefreshCw } from 'lucide-react'
 
 interface BikeTableProps {
   bikes: BikeWithType[]
   onEdit?: (bike: BikeWithType) => void
   onDelete?: (bikeId: string) => void
   onAdd?: () => void
+  onResetStatus?: (bikeId: string) => void
 }
 
-export function BikeTable({ bikes, onEdit, onDelete, onAdd }: BikeTableProps) {
+export function BikeTable({ bikes, onEdit, onDelete, onAdd, onResetStatus }: BikeTableProps) {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'available':
@@ -120,6 +121,15 @@ export function BikeTable({ bikes, onEdit, onDelete, onAdd }: BikeTableProps) {
                         title="Edit"
                       >
                         <Edit className="w-4 h-4" />
+                      </button>
+                    )}
+                    {onResetStatus && bike.status === 'rented' && (
+                      <button
+                        onClick={() => onResetStatus(bike.id)}
+                        className="text-orange-600 hover:text-orange-900"
+                        title="Reset Status"
+                      >
+                        <RefreshCw className="w-4 h-4" />
                       </button>
                     )}
                     {onDelete && bike.status !== 'rented' && (

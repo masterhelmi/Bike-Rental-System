@@ -10,6 +10,7 @@ interface RentalWithDetails {
   bike_type_id: string | null
   start_time: string
   end_time: string
+  duration_minutes: number | null
   status: string
   total_amount: number
   payment_status: string
@@ -26,7 +27,7 @@ interface RentalWithDetails {
 export default function AdminRentalsPage() {
   const [rentals, setRentals] = useState<RentalWithDetails[]>([])
   const [loading, setLoading] = useState(true)
-  const [filter, setFilter] = useState<'all' | 'pending_payment' | 'active' | 'completed'>('pending_payment')
+  const [filter, setFilter] = useState<'all' | 'pending_payment' | 'active' | 'overdue' | 'completed'>('pending_payment')
 
   useEffect(() => {
     fetchRentals()
@@ -64,7 +65,7 @@ export default function AdminRentalsPage() {
         return
       }
 
-      alert('Peminjaman disetujui! Sepeda: ' + data.assigned_bike)
+      alert('Peminjaman disetujui! Sepeda: ' + data.assigned_bike + '\nStatus telah berubah menjadi Aktif dan akan hilang dari daftar Menunggu Pembayaran.')
       fetchRentals()
     } catch (error) {
       console.error('Error approving rental:', error)
@@ -98,6 +99,30 @@ export default function AdminRentalsPage() {
     }
   }
 
+  const handleComplete = async (rentalId: string) => {
+    if (!confirm('Selesaikan peminjaman ini? Sepeda akan dikembalikan ke status tersedia.')) return
+
+    try {
+      const response = await fetch(`/api/rentals/${rentalId}/return`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        alert(data.error || 'Gagal menyelesaikan peminjaman')
+        return
+      }
+
+      alert(data.message || 'Peminjaman selesai!')
+      fetchRentals()
+    } catch (error) {
+      console.error('Error completing rental:', error)
+      alert('Terjadi kesalahan')
+    }
+  }
+
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('id-ID', {
       style: 'currency',
@@ -122,10 +147,12 @@ export default function AdminRentalsPage() {
         return 'bg-yellow-100 text-yellow-800'
       case 'active':
         return 'bg-green-100 text-green-800'
-      case 'completed':
-        return 'bg-blue-100 text-blue-800'
       case 'overdue':
         return 'bg-red-100 text-red-800'
+      case 'completed':
+        return 'bg-blue-100 text-blue-800'
+      case 'completed_with_penalty':
+        return 'bg-orange-100 text-orange-800'
       case 'cancelled':
         return 'bg-gray-100 text-gray-800'
       case 'rejected':
@@ -141,10 +168,12 @@ export default function AdminRentalsPage() {
         return 'Menunggu Pembayaran'
       case 'active':
         return 'Aktif'
-      case 'completed':
-        return 'Selesai'
       case 'overdue':
         return 'Terlambat'
+      case 'completed':
+        return 'Selesai'
+      case 'completed_with_penalty':
+        return 'Selesai dengan Denda'
       case 'cancelled':
         return 'Dibatalkan'
       case 'rejected':
@@ -205,6 +234,16 @@ export default function AdminRentalsPage() {
               Aktif
             </button>
             <button
+              onClick={() => setFilter('overdue')}
+              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                filter === 'overdue'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
+              }`}
+            >
+              Terlambat
+            </button>
+            <button
               onClick={() => setFilter('completed')}
               className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                 filter === 'completed'
@@ -255,7 +294,7 @@ export default function AdminRentalsPage() {
                   </span>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
                   <div className="flex items-center text-sm text-gray-600">
                     <BikeIcon className="w-4 h-4 mr-2" />
                     <div>
@@ -269,6 +308,14 @@ export default function AdminRentalsPage() {
                     <div>
                       <div className="font-medium">Waktu</div>
                       <div>{formatDate(rental.start_time)}</div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center text-sm text-gray-600">
+                    <User className="w-4 h-4 mr-2" />
+                    <div>
+                      <div className="font-medium">Durasi</div>
+                      <div>{rental.duration_minutes ? `${rental.duration_minutes} menit` : '60 menit'}</div>
                     </div>
                   </div>
 
@@ -298,6 +345,18 @@ export default function AdminRentalsPage() {
                     >
                       <XCircle className="w-4 h-4" />
                       Tolak
+                    </button>
+                  </div>
+                )}
+
+                {(rental.status === 'active' || rental.status === 'overdue') && (
+                  <div className="flex gap-3 pt-4 border-t border-gray-200">
+                    <button
+                      onClick={() => handleComplete(rental.id)}
+                      className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium flex items-center justify-center gap-2"
+                    >
+                      <CheckCircle className="w-4 h-4" />
+                      Selesaikan
                     </button>
                   </div>
                 )}

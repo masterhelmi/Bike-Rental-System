@@ -1,9 +1,11 @@
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { NextResponse } from 'next/server'
 
 export async function GET(request: Request) {
   try {
-    const supabase = await createClient()
+    // Use admin client to bypass RLS for admin operations
+    const supabase = createAdminClient()
     const { searchParams } = new URL(request.url)
     const status = searchParams.get('status')
     const bikeTypeId = searchParams.get('bike_type_id')

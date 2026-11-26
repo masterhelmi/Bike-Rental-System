@@ -14,9 +14,9 @@ export async function GET(request: Request) {
       .select(`
         *,
         user:profiles(*),
-        bike:bikes(*, bike_type:bike_types(*)),
+        bike:bikes!queue_bike_id_fkey(*, bike_type:bike_types(*)),
         bike_type:bike_types(*),
-        assigned_bike:bikes(*, bike_type:bike_types(*))
+        assigned_bike:bikes!queue_assigned_bike_id_fkey(*, bike_type:bike_types(*))
       `)
       .order('position', { ascending: true })
 
@@ -144,7 +144,7 @@ export async function POST(request: Request) {
       .select(`
         *,
         user:profiles(*),
-        bike:bikes(*, bike_type:bike_types(*)),
+        bike:bikes!queue_bike_id_fkey(*, bike_type:bike_types(*)),
         bike_type:bike_types(*)
       `)
       .single()

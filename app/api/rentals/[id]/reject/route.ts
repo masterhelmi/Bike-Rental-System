@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { NextResponse } from 'next/server'
 
 export async function POST(
@@ -7,19 +7,25 @@ export async function POST(
 ) {
   try {
     const { id } = await params
-    const supabase = await createClient()
-    const body = await request.json()
+    const adminClient = createAdminClient()
 
-    const { reason } = body
+    let reason = ''
+    try {
+      const body = await request.json()
+      reason = body.reason || ''
+    } catch {
+      // No body or invalid JSON, continue without reason
+    }
 
-    // Get current rental
-    const { data: rental, error: fetchError } = await supabase
+    // Get current rental using admin client
+    const { data: rental, error: fetchError } = await adminClient
       .from('rentals')
       .select('*')
       .eq('id', id)
       .single()
 
     if (fetchError || !rental) {
+      console.error('Rental not found:', fetchError)
       return NextResponse.json(
         { error: 'Rental not found' },
         { status: 404 }
@@ -35,7 +41,7 @@ export async function POST(
     }
 
     // Update rental status to rejected
-    const { data, error } = await supabase
+    const { data, error } = await adminClient
       .from('rentals')
       .update({
         status: 'rejected',
@@ -45,9 +51,12 @@ export async function POST(
       .select()
       .single()
 
-    if (error) throw error
+    if (error) {
+      console.error('Error updating rental:', error)
+      throw error
+    }
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       data,
       message: 'Rental rejected successfully'
     })
