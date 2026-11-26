@@ -17,7 +17,7 @@ export function BikeTable({ bikes, onEdit, onDelete, onAdd, onResetStatus }: Bik
       case 'available':
         return 'bg-green-100 text-green-800'
       case 'rented':
-        return 'bg-blue-100 text-blue-800'
+        return 'bg-[#DBEAFE] text-[#1E3A8A]'
       case 'maintenance':
         return 'bg-yellow-100 text-yellow-800'
       case 'unavailable':
@@ -43,13 +43,13 @@ export function BikeTable({ bikes, onEdit, onDelete, onAdd, onResetStatus }: Bik
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-md border border-gray-200">
-      <div className="p-6 border-b border-gray-200 flex justify-between items-center">
-        <h2 className="text-lg font-semibold text-gray-900">Daftar Sepeda</h2>
+    <div className="bg-white rounded-xl shadow-md border border-gray-100">
+      <div className="p-6 border-b border-gray-100 flex justify-between items-center">
+        <h2 className="text-lg font-semibold text-black">Daftar Sepeda</h2>
         {onAdd && (
           <button
             onClick={onAdd}
-            className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+            className="flex items-center gap-2 bg-[#1E3A8A] text-white px-4 py-2 rounded-lg hover:bg-[#1E40AF] transition-colors text-sm font-medium shadow-md hover:shadow-lg"
           >
             <Plus className="w-4 h-4" />
             Tambah Sepeda
@@ -81,16 +81,16 @@ export function BikeTable({ bikes, onEdit, onDelete, onAdd, onResetStatus }: Bik
               </th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="bg-white divide-y divide-gray-100">
             {bikes.map((bike) => (
               <tr key={bike.id} className="hover:bg-gray-50">
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm font-medium text-gray-900">
+                  <div className="text-sm font-medium text-black">
                     {bike.bike_code}
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm text-gray-900">
+                  <div className="text-sm text-black">
                     {bike.bike_type?.name || '-'}
                   </div>
                   {bike.bike_type && (
@@ -104,7 +104,7 @@ export function BikeTable({ bikes, onEdit, onDelete, onAdd, onResetStatus }: Bik
                     {getStatusText(bike.status)}
                   </span>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-black">
                   {bike.current_location || '-'}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -117,7 +117,7 @@ export function BikeTable({ bikes, onEdit, onDelete, onAdd, onResetStatus }: Bik
                     {onEdit && (
                       <button
                         onClick={() => onEdit(bike)}
-                        className="text-blue-600 hover:text-blue-900"
+                        className="text-[#1E3A8A] hover:text-[#1E40AF]"
                         title="Edit"
                       >
                         <Edit className="w-4 h-4" />

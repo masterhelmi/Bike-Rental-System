@@ -150,7 +150,7 @@ export default function AdminRentalsPage() {
       case 'overdue':
         return 'bg-red-100 text-red-800'
       case 'completed':
-        return 'bg-blue-100 text-blue-800'
+        return 'bg-[#DBEAFE] text-[#1E3A8A]'
       case 'completed_with_penalty':
         return 'bg-orange-100 text-orange-800'
       case 'cancelled':
@@ -184,17 +184,24 @@ export default function AdminRentalsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#DBEAFE]">
       {/* Header */}
-      <header className="bg-white shadow-sm">
+      <header className="bg-white shadow-sm border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <Link href="/admin" className="text-gray-600 hover:text-gray-900">
+              <Link href="/admin" className="text-gray-600 hover:text-black transition-colors">
                 <ArrowLeft className="w-6 h-6" />
               </Link>
-              <h1 className="text-2xl font-bold text-gray-900">Persetujuan Peminjaman</h1>
+              <h1 className="text-2xl font-bold text-black">Persetujuan Peminjaman</h1>
             </div>
+            <Link href="/admin">
+              <img
+                src="/logo.png"
+                alt="BikeShare Logo"
+                className="h-10 w-auto object-contain"
+              />
+            </Link>
           </div>
         </div>
       </header>
@@ -207,7 +214,7 @@ export default function AdminRentalsPage() {
               onClick={() => setFilter('all')}
               className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                 filter === 'all'
-                  ? 'bg-blue-600 text-white'
+                  ? 'bg-[#1E3A8A] text-white'
                   : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
               }`}
             >
@@ -217,7 +224,7 @@ export default function AdminRentalsPage() {
               onClick={() => setFilter('pending_payment')}
               className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                 filter === 'pending_payment'
-                  ? 'bg-blue-600 text-white'
+                  ? 'bg-[#1E3A8A] text-white'
                   : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
               }`}
             >
@@ -227,7 +234,7 @@ export default function AdminRentalsPage() {
               onClick={() => setFilter('active')}
               className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                 filter === 'active'
-                  ? 'bg-blue-600 text-white'
+                  ? 'bg-[#1E3A8A] text-white'
                   : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
               }`}
             >
@@ -237,7 +244,7 @@ export default function AdminRentalsPage() {
               onClick={() => setFilter('overdue')}
               className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                 filter === 'overdue'
-                  ? 'bg-blue-600 text-white'
+                  ? 'bg-[#1E3A8A] text-white'
                   : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
               }`}
             >
@@ -247,7 +254,7 @@ export default function AdminRentalsPage() {
               onClick={() => setFilter('completed')}
               className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                 filter === 'completed'
-                  ? 'bg-blue-600 text-white'
+                  ? 'bg-[#1E3A8A] text-white'
                   : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
               }`}
             >
@@ -258,17 +265,17 @@ export default function AdminRentalsPage() {
 
         {loading ? (
           <div className="text-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#1E3A8A] mx-auto"></div>
             <p className="mt-4 text-gray-600">Memuat peminjaman...</p>
           </div>
         ) : rentals.length === 0 ? (
-          <div className="text-center py-12 bg-white rounded-lg shadow border border-gray-200">
+          <div className="text-center py-12 bg-white rounded-xl shadow border border-gray-100">
             <Clock className="w-16 h-16 mx-auto text-gray-400 mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            <h3 className="text-lg font-semibold text-black mb-2">
               Tidak Ada Peminjaman
             </h3>
             <p className="text-gray-600">
-              {filter === 'pending_payment' 
+              {filter === 'pending_payment'
                 ? 'Tidak ada peminjaman yang menunggu persetujuan.'
                 : 'Tidak ada peminjaman dengan status ini.'}
             </p>
@@ -278,11 +285,11 @@ export default function AdminRentalsPage() {
             {rentals.map((rental) => (
               <div
                 key={rental.id}
-                className="bg-white rounded-lg shadow-md p-6 border border-gray-200"
+                className="bg-white rounded-xl shadow-md p-6 border border-gray-100"
               >
                 <div className="flex items-start justify-between mb-4">
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900">
+                    <h3 className="text-lg font-semibold text-black">
                       {rental.user?.full_name || 'Unknown User'}
                     </h3>
                     <p className="text-sm text-gray-600">
@@ -323,7 +330,7 @@ export default function AdminRentalsPage() {
                     <DollarSign className="w-4 h-4 mr-2" />
                     <div>
                       <div className="font-medium">Total</div>
-                      <div className="font-semibold text-gray-900">
+                      <div className="font-semibold text-black">
                         {formatCurrency(rental.total_amount)}
                       </div>
                     </div>
@@ -331,7 +338,7 @@ export default function AdminRentalsPage() {
                 </div>
 
                 {rental.status === 'pending_payment' && (
-                  <div className="flex gap-3 pt-4 border-t border-gray-200">
+                  <div className="flex gap-3 pt-4 border-t border-gray-100">
                     <button
                       onClick={() => handleApprove(rental.id)}
                       className="flex-1 bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors text-sm font-medium flex items-center justify-center gap-2"
@@ -350,10 +357,10 @@ export default function AdminRentalsPage() {
                 )}
 
                 {(rental.status === 'active' || rental.status === 'overdue') && (
-                  <div className="flex gap-3 pt-4 border-t border-gray-200">
+                  <div className="flex gap-3 pt-4 border-t border-gray-100">
                     <button
                       onClick={() => handleComplete(rental.id)}
-                      className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium flex items-center justify-center gap-2"
+                      className="flex-1 bg-[#1E3A8A] text-white py-2 px-4 rounded-lg hover:bg-[#1E40AF] transition-colors text-sm font-medium flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
                     >
                       <CheckCircle className="w-4 h-4" />
                       Selesaikan

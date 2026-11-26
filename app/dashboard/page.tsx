@@ -151,33 +151,39 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-gray-600">Memuat...</div>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-4 border-blue-200 border-t-[#1E3A8A] rounded-full animate-spin"></div>
+          <p className="text-slate-600 font-medium">Memuat dashboard...</p>
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
       {/* Header */}
-      <header className="bg-white shadow-sm">
+      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200/60 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center">
-            <div className="flex items-center gap-2">
-              <Bike className="w-8 h-8 text-blue-600" />
-              <h1 className="text-2xl font-bold text-gray-900">BikeShare</h1>
-            </div>
-            <div className="flex items-center gap-4">
+            <Link href="/dashboard" className="flex items-center">
+              <img
+                src="/logo.png"
+                alt="BikeShare Logo"
+                className="h-12 w-auto object-contain"
+              />
+            </Link>
+            <div className="flex items-center gap-3">
               <Link
                 href="/dashboard/history"
-                className="flex items-center gap-2 text-gray-600 hover:text-gray-900"
+                className="flex items-center gap-2 px-4 py-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-all font-medium"
               >
                 <History className="w-4 h-4" />
                 Riwayat
               </Link>
               <Link
                 href="/auth/login"
-                className="flex items-center gap-2 text-gray-600 hover:text-gray-900"
+                className="flex items-center gap-2 px-4 py-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-all font-medium"
               >
                 <LogOut className="w-4 h-4" />
                 Logout
@@ -190,22 +196,22 @@ export default function DashboardPage() {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Dashboard</h2>
-          <p className="text-gray-600">Kelola peminjaman sepeda Anda</p>
+          <h1 className="font-display text-3xl font-bold text-slate-900 mb-2">Dashboard</h1>
+          <p className="text-slate-600">Kelola peminjaman sepeda Anda</p>
         </div>
 
         {/* Pending Payment Alert - Full Width */}
         {pendingRental && (
-          <div className="mb-8 bg-gradient-to-r from-yellow-50 to-orange-50 border-2 border-yellow-300 rounded-xl p-6 shadow-lg">
+          <div className="mb-8 bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-300 rounded-2xl p-6 shadow-lg backdrop-blur-sm">
             <div className="flex items-center gap-4">
-              <div className="bg-yellow-100 rounded-full p-3">
-                <Clock className="w-8 h-8 text-yellow-600" />
+              <div className="bg-amber-100 rounded-full p-3">
+                <Clock className="w-8 h-8 text-amber-600" />
               </div>
               <div className="flex-1">
-                <h3 className="text-xl font-bold text-yellow-900 mb-1">
+                <h3 className="text-xl font-bold text-amber-900 mb-1">
                   Menunggu Pembayaran
                 </h3>
-                <p className="text-yellow-800">
+                <p className="text-amber-800">
                   Anda memiliki peminjaman yang menunggu pembayaran. Silakan selesaikan pembayaran untuk memulai peminjaman.
                 </p>
               </div>
@@ -217,7 +223,7 @@ export default function DashboardPage() {
           {/* Pending Rental - Full Width when exists */}
           {pendingRental ? (
             <div className="lg:col-span-2">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Detail Peminjaman</h3>
+              <h3 className="font-display text-lg font-semibold text-slate-900 mb-4">Detail Peminjaman</h3>
               <RentalCard
                 rental={pendingRental}
                 onCancel={handleCancelPendingRental}
@@ -227,24 +233,26 @@ export default function DashboardPage() {
             <>
               {/* Active Rental */}
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Peminjaman Aktif</h3>
+                <h3 className="font-display text-lg font-semibold text-slate-900 mb-4">Peminjaman Aktif</h3>
                 {activeRental ? (
                   <RentalCard
                     rental={activeRental}
                   />
                 ) : (
-                  <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
+                  <div className="bg-white rounded-2xl shadow-lg p-8 border border-slate-200/60 backdrop-blur-sm">
                     <div className="text-center py-8">
-                      <Bike className="w-12 h-12 mx-auto text-gray-400 mb-3" />
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                      <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <Bike className="w-8 h-8 text-slate-400" />
+                      </div>
+                      <h3 className="font-display text-lg font-semibold text-slate-900 mb-2">
                         Tidak Ada Peminjaman Aktif
                       </h3>
-                      <p className="text-sm text-gray-600 mb-4">
+                      <p className="text-sm text-slate-600 mb-6">
                         Anda belum meminjam sepeda saat ini.
                       </p>
                       <Link
                         href="/dashboard/book"
-                        className="inline-flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+                        className="inline-flex items-center gap-2 bg-gradient-to-r from-[#1E3A8A] to-[#2563EB] text-white px-6 py-3 rounded-xl hover:from-[#1E40AF] hover:to-[#3B82F6] transition-all text-sm font-semibold shadow-md hover:shadow-lg hover:scale-105"
                       >
                         <Plus className="w-4 h-4" />
                         Pinjam Sepeda
@@ -256,7 +264,7 @@ export default function DashboardPage() {
 
               {/* Queue Status */}
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Status Antrian</h3>
+                <h3 className="font-display text-lg font-semibold text-slate-900 mb-4">Status Antrian</h3>
                 <QueueStatus queue={queue} onLeaveQueue={handleLeaveQueue} />
               </div>
             </>

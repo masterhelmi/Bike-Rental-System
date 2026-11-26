@@ -144,40 +144,46 @@ export default function AdminDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-gray-600">Memuat...</div>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-4 border-blue-200 border-t-[#1E3A8A] rounded-full animate-spin"></div>
+          <p className="text-slate-600 font-medium">Memuat admin dashboard...</p>
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
       {/* Header */}
-      <header className="bg-white shadow-sm">
+      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200/60 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center">
-            <div className="flex items-center gap-2">
-              <Bike className="w-8 h-8 text-blue-600" />
-              <h1 className="text-2xl font-bold text-gray-900">BikeShare Admin</h1>
-            </div>
-            <div className="flex items-center gap-4">
+            <Link href="/admin" className="flex items-center">
+              <img
+                src="/logo.png"
+                alt="BikeShare Logo"
+                className="h-12 w-auto object-contain"
+              />
+            </Link>
+            <div className="flex items-center gap-3">
               <Link
                 href="/admin/analytics"
-                className="flex items-center gap-2 text-gray-600 hover:text-gray-900"
+                className="flex items-center gap-2 px-4 py-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-all font-medium"
               >
                 <BarChart3 className="w-4 h-4" />
                 Analytics
               </Link>
               <Link
                 href="/admin/settings"
-                className="flex items-center gap-2 text-gray-600 hover:text-gray-900"
+                className="flex items-center gap-2 px-4 py-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-all font-medium"
               >
                 <Settings className="w-4 h-4" />
                 Settings
               </Link>
               <Link
                 href="/auth/login"
-                className="flex items-center gap-2 text-gray-600 hover:text-gray-900"
+                className="flex items-center gap-2 px-4 py-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-all font-medium"
               >
                 <LogOut className="w-4 h-4" />
                 Logout
@@ -190,8 +196,8 @@ export default function AdminDashboard() {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Dashboard Admin</h2>
-          <p className="text-gray-600">Overview sistem peminjaman sepeda</p>
+          <h1 className="font-display text-3xl font-bold text-slate-900 mb-2">Admin Dashboard</h1>
+          <p className="text-slate-600">Overview sistem peminjaman sepeda</p>
         </div>
 
         {/* Stats Cards */}
@@ -208,52 +214,60 @@ export default function AdminDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-8">
           <Link
             href="/admin/rentals"
-            className="bg-white rounded-lg shadow-md p-6 border border-gray-200 hover:shadow-lg transition-shadow"
+            className="group bg-white rounded-2xl shadow-lg p-6 border border-slate-200/60 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
           >
             <div className="flex items-center gap-3 mb-3">
-              <Users className="w-6 h-6 text-blue-600" />
-              <h3 className="text-lg font-semibold text-gray-900">Persetujuan Peminjaman</h3>
+              <div className="w-12 h-12 bg-gradient-to-br from-[#1E3A8A] to-[#2563EB] rounded-xl flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">
+                <Users className="w-6 h-6 text-white" />
+              </div>
+              <h3 className="font-display text-lg font-semibold text-slate-900">Persetujuan</h3>
             </div>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-slate-600">
               Setujui atau tolak permintaan peminjaman
             </p>
           </Link>
 
           <Link
             href="/admin/queue"
-            className="bg-white rounded-lg shadow-md p-6 border border-gray-200 hover:shadow-lg transition-shadow"
+            className="group bg-white rounded-2xl shadow-lg p-6 border border-slate-200/60 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
           >
             <div className="flex items-center gap-3 mb-3">
-              <Users className="w-6 h-6 text-green-600" />
-              <h3 className="text-lg font-semibold text-gray-900">Kelola Antrian</h3>
+              <div className="w-12 h-12 bg-gradient-to-br from-[#1E3A8A] to-[#2563EB] rounded-xl flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">
+                <Users className="w-6 h-6 text-white" />
+              </div>
+              <h3 className="font-display text-lg font-semibold text-slate-900">Kelola Antrian</h3>
             </div>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-slate-600">
               Atur dan prioritaskan antrian user
             </p>
           </Link>
 
           <Link
             href="/admin/transactions"
-            className="bg-white rounded-lg shadow-md p-6 border border-gray-200 hover:shadow-lg transition-shadow"
+            className="group bg-white rounded-2xl shadow-lg p-6 border border-slate-200/60 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
           >
             <div className="flex items-center gap-3 mb-3">
-              <DollarSign className="w-6 h-6 text-purple-600" />
-              <h3 className="text-lg font-semibold text-gray-900">Transaksi</h3>
+              <div className="w-12 h-12 bg-gradient-to-br from-[#1E3A8A] to-[#2563EB] rounded-xl flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">
+                <DollarSign className="w-6 h-6 text-white" />
+              </div>
+              <h3 className="font-display text-lg font-semibold text-slate-900">Transaksi</h3>
             </div>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-slate-600">
               Lihat riwayat transaksi dan pendapatan
             </p>
           </Link>
 
           <Link
             href="/admin/penalties"
-            className="bg-white rounded-lg shadow-md p-6 border border-gray-200 hover:shadow-lg transition-shadow"
+            className="group bg-white rounded-2xl shadow-lg p-6 border border-slate-200/60 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
           >
             <div className="flex items-center gap-3 mb-3">
-              <AlertTriangle className="w-6 h-6 text-red-600" />
-              <h3 className="text-lg font-semibold text-gray-900">Manajemen Denda</h3>
+              <div className="w-12 h-12 bg-gradient-to-br from-[#1E3A8A] to-[#2563EB] rounded-xl flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">
+                <AlertTriangle className="w-6 h-6 text-white" />
+              </div>
+              <h3 className="font-display text-lg font-semibold text-slate-900">Denda</h3>
             </div>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-slate-600">
               Kelola denda keterlambatan dan waiving
             </p>
           </Link>

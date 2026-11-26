@@ -137,36 +137,45 @@ export default function BookBikePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
       {/* Header */}
-      <header className="bg-white shadow-sm">
+      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200/60 shadow-sm">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center gap-4">
-            <Link href="/dashboard" className="text-gray-600 hover:text-gray-900">
-              <ArrowLeft className="w-6 h-6" />
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <Link href="/dashboard" className="w-10 h-10 flex items-center justify-center text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-all">
+                <ArrowLeft className="w-6 h-6" />
+              </Link>
+              <h1 className="font-display text-2xl font-bold text-slate-900">Pinjam Sepeda</h1>
+            </div>
+            <Link href="/dashboard" className="flex items-center">
+              <img
+                src="/logo.png"
+                alt="BikeShare Logo"
+                className="h-10 w-auto object-contain"
+              />
             </Link>
-            <h1 className="text-2xl font-bold text-gray-900">Pinjam Sepeda</h1>
           </div>
         </div>
       </header>
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg mb-6">
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl mb-6 text-sm font-medium">
             {error}
           </div>
         )}
 
         {loading ? (
           <div className="text-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-            <p className="mt-4 text-gray-600">Memuat jenis sepeda...</p>
+            <div className="w-12 h-12 border-4 border-blue-200 border-t-[#1E3A8A] rounded-full animate-spin mx-auto"></div>
+            <p className="mt-4 text-slate-600 font-medium">Memuat jenis sepeda...</p>
           </div>
         ) : (
           <div className="space-y-8">
             {/* Pilih Jenis Sepeda */}
             <div>
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">
+              <h2 className="font-display text-xl font-semibold text-slate-900 mb-6">
                 Pilih Jenis Sepeda
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -174,23 +183,24 @@ export default function BookBikePage() {
                   <div
                     key={type.id}
                     onClick={() => setSelectedBikeType(type.id)}
-                    className={`relative cursor-pointer rounded-xl overflow-hidden transition-all hover:shadow-lg ${
+                    className={`relative cursor-pointer rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${
                       selectedBikeType === type.id
-                        ? 'ring-4 ring-blue-500 shadow-xl'
-                        : 'shadow-md hover:shadow-lg'
+                        ? 'ring-4 ring-[#1E3A8A] shadow-2xl scale-[1.02]'
+                        : 'shadow-lg border border-slate-200/60'
                     }`}
                   >
-                    <div className={`${getBikeImage(type.name)} p-6 text-white`}>
-                      <div className="flex items-center justify-center mb-4">
+                    <div className={`${getBikeImage(type.name)} p-6 text-white relative`}>
+                      <div className="absolute inset-0 bg-black/10"></div>
+                      <div className="relative flex items-center justify-center mb-4">
                         {getBikeIcon(type.name)}
                       </div>
-                      <h3 className="text-lg font-bold text-center mb-2">
+                      <h3 className="relative text-lg font-bold text-center mb-2">
                         {type.name}
                       </h3>
-                      <p className="text-sm text-center opacity-90 mb-3">
+                      <p className="relative text-sm text-center opacity-90 mb-3">
                         {type.description}
                       </p>
-                      <div className="text-center">
+                      <div className="relative text-center">
                         <span className="text-2xl font-bold">
                           {formatCurrency(type.hourly_rate)}
                         </span>
@@ -198,7 +208,7 @@ export default function BookBikePage() {
                       </div>
                     </div>
                     {selectedBikeType === type.id && (
-                      <div className="absolute top-2 right-2 bg-white rounded-full p-1">
+                      <div className="absolute top-3 right-3 bg-white rounded-full p-1.5 shadow-lg">
                         <Check className="w-5 h-5 text-green-500" />
                       </div>
                     )}
@@ -208,14 +218,16 @@ export default function BookBikePage() {
             </div>
 
             {/* Durasi Peminjaman */}
-            <div className="bg-white rounded-xl shadow-md p-6 border border-gray-200">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">
+            <div className="bg-white rounded-2xl shadow-lg p-6 border border-slate-200/60 backdrop-blur-sm">
+              <h2 className="font-display text-xl font-semibold text-slate-900 mb-6">
                 Durasi Peminjaman
               </h2>
               <div className="flex items-center gap-4">
-                <Clock className="w-6 h-6 text-blue-600" />
+                <div className="w-12 h-12 bg-gradient-to-br from-[#1E3A8A] to-[#2563EB] rounded-xl flex items-center justify-center shadow-md">
+                  <Clock className="w-6 h-6 text-white" />
+                </div>
                 <div className="flex-1">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-slate-700 mb-3">
                     Pilih durasi (1-3 jam)
                   </label>
                   <div className="flex gap-3">
@@ -223,10 +235,10 @@ export default function BookBikePage() {
                       <button
                         key={hours}
                         onClick={() => setDuration(hours)}
-                        className={`flex-1 py-3 px-4 rounded-lg font-medium transition-all ${
+                        className={`flex-1 py-3 px-4 rounded-xl font-semibold transition-all duration-300 ${
                           duration === hours
-                            ? 'bg-blue-600 text-white shadow-md'
-                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                            ? 'bg-gradient-to-r from-[#1E3A8A] to-[#2563EB] text-white shadow-lg scale-105'
+                            : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                         }`}
                       >
                         {hours} Jam
@@ -239,30 +251,30 @@ export default function BookBikePage() {
 
             {/* Ringkasan Pesanan */}
             {selectedBikeType && (
-              <div className="bg-white rounded-xl shadow-md p-6 border border-gray-200">
-                <h2 className="text-xl font-semibold text-gray-900 mb-4">
+              <div className="bg-white rounded-2xl shadow-lg p-6 border border-slate-200/60 backdrop-blur-sm">
+                <h2 className="font-display text-xl font-semibold text-slate-900 mb-6">
                   Ringkasan Pesanan
                 </h2>
                 <div className="space-y-3">
-                  <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                    <span className="text-gray-600">Jenis Sepeda</span>
-                    <span className="font-medium text-gray-900">
+                  <div className="flex justify-between items-center py-3 border-b border-slate-100">
+                    <span className="text-slate-600">Jenis Sepeda</span>
+                    <span className="font-semibold text-slate-900">
                       {bikeTypes.find(type => type.id === selectedBikeType)?.name}
                     </span>
                   </div>
-                  <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                    <span className="text-gray-600">Durasi</span>
-                    <span className="font-medium text-gray-900">{duration} Jam</span>
+                  <div className="flex justify-between items-center py-3 border-b border-slate-100">
+                    <span className="text-slate-600">Durasi</span>
+                    <span className="font-semibold text-slate-900">{duration} Jam</span>
                   </div>
-                  <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                    <span className="text-gray-600">Harga per Jam</span>
-                    <span className="font-medium text-gray-900">
+                  <div className="flex justify-between items-center py-3 border-b border-slate-100">
+                    <span className="text-slate-600">Harga per Jam</span>
+                    <span className="font-semibold text-slate-900">
                       {formatCurrency(bikeTypes.find(type => type.id === selectedBikeType)?.hourly_rate || 0)}
                     </span>
                   </div>
-                  <div className="flex justify-between items-center py-3 bg-blue-50 rounded-lg px-4">
-                    <span className="text-gray-900 font-semibold">Total Biaya</span>
-                    <span className="text-2xl font-bold text-blue-600">
+                  <div className="flex justify-between items-center py-4 bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl px-4">
+                    <span className="text-slate-900 font-semibold">Total Biaya</span>
+                    <span className="text-2xl font-bold text-[#1E3A8A]">
                       {formatCurrency(calculateTotal())}
                     </span>
                   </div>
@@ -271,11 +283,11 @@ export default function BookBikePage() {
                 <button
                   onClick={handleBookBike}
                   disabled={bookingLoading}
-                  className="w-full mt-6 bg-blue-600 text-white py-4 rounded-xl hover:bg-blue-700 transition-colors font-semibold text-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="w-full mt-6 bg-gradient-to-r from-[#1E3A8A] to-[#2563EB] text-white py-4 rounded-xl hover:from-[#1E40AF] hover:to-[#3B82F6] transition-all font-semibold text-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg hover:shadow-xl hover:scale-[1.02]"
                 >
                   {bookingLoading ? (
                     <>
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                       Memproses...
                     </>
                   ) : (
@@ -289,17 +301,34 @@ export default function BookBikePage() {
             )}
 
             {/* Info Tambahan */}
-            <div className="bg-blue-50 rounded-xl p-6 border border-blue-200">
-              <h3 className="font-semibold text-blue-900 mb-3 flex items-center gap-2">
-                <Clock className="w-5 h-5" />
+            <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-6 border border-blue-200">
+              <h3 className="font-display font-semibold text-slate-900 mb-4 flex items-center gap-3">
+                <div className="w-8 h-8 bg-[#1E3A8A] rounded-lg flex items-center justify-center">
+                  <Clock className="w-4 h-4 text-white" />
+                </div>
                 Informasi Peminjaman
               </h3>
-              <ul className="space-y-2 text-sm text-blue-800">
-                <li>• Durasi peminjaman maksimal 3 jam</li>
-                <li>• Dapat diperpanjang maksimal 2 kali (1 jam per perpanjangan)</li>
-                <li>• Pembayaran dilakukan di muka (prepaid)</li>
-                <li>• Jam operasional: 06:00 - 19:00</li>
-                <li>• Keterlambatan akan dikenakan denda Rp 100.000</li>
+              <ul className="space-y-2 text-sm text-slate-700">
+                <li className="flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 bg-[#1E3A8A] rounded-full"></div>
+                  Durasi peminjaman maksimal 3 jam
+                </li>
+                <li className="flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 bg-[#1E3A8A] rounded-full"></div>
+                  Dapat diperpanjang maksimal 2 kali (1 jam per perpanjangan)
+                </li>
+                <li className="flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 bg-[#1E3A8A] rounded-full"></div>
+                  Pembayaran dilakukan di muka (prepaid)
+                </li>
+                <li className="flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 bg-[#1E3A8A] rounded-full"></div>
+                  Jam operasional: 06:00 - 19:00
+                </li>
+                <li className="flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 bg-[#1E3A8A] rounded-full"></div>
+                  Keterlambatan akan dikenakan denda Rp 100.000
+                </li>
               </ul>
             </div>
           </div>

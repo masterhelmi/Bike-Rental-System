@@ -13,10 +13,10 @@ interface QueueStatusProps {
 export function QueueStatus({ queue, onLeaveQueue }: QueueStatusProps) {
   if (!queue) {
     return (
-      <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
+      <div className="bg-white rounded-xl shadow-md p-6 border border-gray-100">
         <div className="text-center py-8">
           <Users className="w-12 h-12 mx-auto text-gray-400 mb-3" />
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+          <h3 className="text-lg font-semibold text-black mb-2">
             Tidak Sedang Antri
           </h3>
           <p className="text-sm text-gray-600">
@@ -41,7 +41,7 @@ export function QueueStatus({ queue, onLeaveQueue }: QueueStatusProps) {
     if (isExpired) return 'bg-red-100 text-red-800'
     if (isAssigned) return 'bg-green-100 text-green-800'
     if (isNotified) return 'bg-yellow-100 text-yellow-800'
-    if (isWaiting) return 'bg-blue-100 text-blue-800'
+    if (isWaiting) return 'bg-[#DBEAFE] text-[#1E3A8A]'
     return 'bg-gray-100 text-gray-800'
   }
 
@@ -59,7 +59,7 @@ export function QueueStatus({ queue, onLeaveQueue }: QueueStatusProps) {
     const estimatedMinutes = queue.position * 60
     const hours = Math.floor(estimatedMinutes / 60)
     const minutes = estimatedMinutes % 60
-    
+
     if (hours > 0) {
       return `~${hours}j ${minutes}m`
     }
@@ -67,10 +67,10 @@ export function QueueStatus({ queue, onLeaveQueue }: QueueStatusProps) {
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
+    <div className="bg-white rounded-xl shadow-md p-6 border border-gray-100">
       <div className="flex justify-between items-start mb-4">
         <div>
-          <h3 className="text-lg font-semibold text-gray-900">
+          <h3 className="text-lg font-semibold text-black">
             Status Antrian
           </h3>
           <p className="text-sm text-gray-600">

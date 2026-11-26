@@ -33,48 +33,48 @@ export function StatsCards({
       value: totalBikes,
       subtitle: `${availableBikes} tersedia`,
       icon: Bike,
-      color: 'bg-blue-500'
+      color: 'bg-[#1E3A8A]'
     },
     {
       title: 'Peminjaman Aktif',
       value: activeRentals,
       subtitle: 'Sedang berjalan',
       icon: Clock,
-      color: 'bg-green-500'
+      color: 'bg-[#1E3A8A]'
     },
     {
       title: 'Antrian',
       value: queueLength,
       subtitle: 'User menunggu',
       icon: Users,
-      color: 'bg-yellow-500'
+      color: 'bg-[#1E3A8A]'
     },
     {
       title: 'Pendapatan Hari Ini',
       value: formatCurrency(todayRevenue),
       subtitle: 'Total transaksi',
       icon: DollarSign,
-      color: 'bg-purple-500'
+      color: 'bg-[#1E3A8A]'
     },
     {
       title: 'Denda Hari Ini',
       value: formatCurrency(todayPenalties),
       subtitle: 'Total denda keterlambatan',
       icon: AlertTriangle,
-      color: 'bg-red-500'
+      color: 'bg-[#1E3A8A]'
     }
   ]
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
       {stats.map((stat) => (
-        <div key={stat.title} className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
+        <div key={stat.title} className="bg-white rounded-xl shadow-md p-6 border border-gray-100 hover:shadow-lg transition-shadow">
           <div className="flex items-center justify-between mb-4">
             <div className={`p-3 rounded-lg ${stat.color}`}>
               <stat.icon className="w-6 h-6 text-white" />
             </div>
           </div>
-          <h3 className="text-2xl font-bold text-gray-900 mb-1">
+          <h3 className="text-2xl font-bold text-black mb-1">
             {stat.value}
           </h3>
           <p className="text-sm text-gray-600">

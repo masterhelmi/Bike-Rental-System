@@ -34,7 +34,7 @@ export function RentalCard({ rental, onExtend, onComplete, onCancel }: RentalCar
   const getStatusColor = () => {
     if (isOverdue) return 'bg-red-100 text-red-800'
     if (isActive) return 'bg-green-100 text-green-800'
-    if (isCompleted) return 'bg-blue-100 text-blue-800'
+    if (isCompleted) return 'bg-[#DBEAFE] text-[#1E3A8A]'
     if (isCompletedWithPenalty) return 'bg-orange-100 text-orange-800'
     if (isCancelled) return 'bg-gray-100 text-gray-800'
     if (rental.status === 'pending_payment') return 'bg-yellow-100 text-yellow-800'

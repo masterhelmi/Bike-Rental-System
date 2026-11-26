@@ -77,27 +77,34 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white flex items-center justify-center px-4 py-8">
-      <div className="max-w-md w-full">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 flex items-center justify-center px-4 py-8 relative overflow-hidden">
+      {/* Background decorative elements */}
+      <div className="absolute top-0 left-0 w-72 h-72 bg-blue-200/30 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
+      <div className="absolute bottom-0 right-0 w-72 h-72 bg-purple-200/30 rounded-full blur-3xl translate-x-1/2 translate-y-1/2"></div>
+
+      <div className="max-w-md w-full relative">
         <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <Bike className="w-8 h-8 text-blue-600" />
-            <h1 className="text-2xl font-bold text-gray-900">BikeShare</h1>
+          <div className="flex justify-center mb-4">
+            <img
+              src="/logo.png"
+              alt="BikeShare Logo"
+              className="h-14 w-auto object-contain"
+            />
           </div>
-          <h2 className="text-2xl font-semibold text-gray-900">Daftar Akun</h2>
-          <p className="text-gray-600 mt-2">Buat akun untuk mulai menggunakan BikeShare</p>
+          <h1 className="font-display text-3xl font-bold text-slate-900 mb-2">Buat Akun Baru</h1>
+          <p className="text-slate-600">Daftar untuk mulai menggunakan BikeShare</p>
         </div>
 
-        <div className="bg-white rounded-lg shadow-md p-8 border border-gray-200">
+        <div className="bg-white rounded-2xl shadow-xl p-8 border border-slate-200/60 backdrop-blur-sm">
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg mb-4">
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl mb-6 text-sm font-medium">
               {error}
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="fullName" className="block text-sm font-medium text-slate-700 mb-2">
                 Nama Lengkap
               </label>
               <input
@@ -106,13 +113,13 @@ export default function RegisterPage() {
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 required
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-[#1E3A8A] focus:border-transparent transition-all bg-slate-50/50"
                 placeholder="John Doe"
               />
             </div>
 
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-2">
                 Email
               </label>
               <input
@@ -121,13 +128,13 @@ export default function RegisterPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-[#1E3A8A] focus:border-transparent transition-all bg-slate-50/50"
                 placeholder="nama@email.com"
               />
             </div>
 
             <div>
-              <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="phone" className="block text-sm font-medium text-slate-700 mb-2">
                 Nomor Telepon
               </label>
               <input
@@ -136,13 +143,13 @@ export default function RegisterPage() {
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 required
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-[#1E3A8A] focus:border-transparent transition-all bg-slate-50/50"
                 placeholder="08123456789"
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="password" className="block text-sm font-medium text-slate-700 mb-2">
                 Password
               </label>
               <input
@@ -152,13 +159,13 @@ export default function RegisterPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 minLength={6}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-[#1E3A8A] focus:border-transparent transition-all bg-slate-50/50"
                 placeholder="••••••••"
               />
             </div>
 
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-slate-700 mb-2">
                 Konfirmasi Password
               </label>
               <input
@@ -168,7 +175,7 @@ export default function RegisterPage() {
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
                 minLength={6}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-[#1E3A8A] focus:border-transparent transition-all bg-slate-50/50"
                 placeholder="••••••••"
               />
             </div>
@@ -176,25 +183,35 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-gradient-to-r from-[#1E3A8A] to-[#2563EB] text-white py-4 rounded-xl hover:from-[#1E40AF] hover:to-[#3B82F6] transition-all font-semibold disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl hover:scale-[1.02]"
             >
-              {loading ? 'Memproses...' : 'Daftar'}
+              {loading ? (
+                <div className="flex items-center justify-center gap-2">
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  Memproses...
+                </div>
+              ) : (
+                'Daftar'
+              )}
             </button>
           </form>
 
           <div className="mt-6 text-center">
-            <p className="text-gray-600">
+            <p className="text-slate-600">
               Sudah punya akun?{' '}
-              <Link href="/auth/login" className="text-blue-600 hover:text-blue-700 font-medium">
+              <Link href="/auth/login" className="text-[#1E3A8A] hover:text-[#1E40AF] font-semibold transition-colors">
                 Login
               </Link>
             </p>
           </div>
         </div>
 
-        <div className="mt-4 text-center">
-          <Link href="/" className="text-gray-600 hover:text-gray-900 text-sm">
-            ← Kembali ke beranda
+        <div className="mt-6 text-center">
+          <Link href="/" className="text-slate-600 hover:text-slate-900 text-sm font-medium transition-colors inline-flex items-center gap-2">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            Kembali ke beranda
           </Link>
         </div>
       </div>
