@@ -1,7 +1,7 @@
 'use client'
 
 import { BikeWithType } from '@/lib/types/database'
-import { Edit, Trash2, Plus, RefreshCw } from 'lucide-react'
+import { Edit, Trash2, Plus, RefreshCw, Bike } from 'lucide-react'
 
 interface BikeTableProps {
   bikes: BikeWithType[]
