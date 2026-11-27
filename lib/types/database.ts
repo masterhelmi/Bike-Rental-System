@@ -299,10 +299,12 @@ export interface RentalWithDetails {
   duration_minutes: number | null
   is_extended: boolean
   extension_count: number
-  status: 'pending_payment' | 'active' | 'completed' | 'overdue' | 'cancelled' | 'rejected'
+  status: 'pending_payment' | 'active' | 'completed' | 'completed_with_penalty' | 'overdue' | 'cancelled' | 'rejected'
   total_amount: number
   paid_amount: number
   payment_status: 'pending' | 'paid' | 'refunded' | 'partial'
+  penalty_amount: number
+  overdue_minutes: number
   fine_amount?: number
   is_fined?: boolean
   lock_version: number
